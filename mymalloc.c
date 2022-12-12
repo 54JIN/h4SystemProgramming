@@ -26,7 +26,7 @@ void *ptr_sub(void *ptr, size_t i)
 
 
 //ph = page header
-void *init_page(struct ph *prev_ph, size_t size)
+void *myinit(struct ph *prev_ph, size_t size)
 {
   size_t lenght = sysconf(_SC_PAGE_SIZE);
   if (size >= lenght + sizeof(struct ph) + sizeof(struct meta))
@@ -79,7 +79,7 @@ void *mymalloc(size_t size)
     return NULL;
   else if (h == NULL)
   {
-    init_page(NULL, size);
+    myinit(NULL, size);
     if (h == NULL)
       return NULL;
   }
@@ -106,7 +106,7 @@ void *mymalloc(size_t size)
   if (ph == NULL)
   {
     //printf("New page created\n");
-    ph = init_page(prev, size);
+    ph = myinit(prev, size);
     if (ph == NULL)
     {
       //free_all(h);
@@ -159,7 +159,7 @@ void check_empty()
 }
 
 __attribute__ ((visibility ("default")))
-void free(void *ptr)
+void myfree(void *ptr)
 {
   if (ptr == NULL)
     return ;
@@ -227,7 +227,7 @@ void *myrealloc(void *ptr, size_t size)
     return mymalloc(size);
   else if (size == 0)
   {
-    free(ptr);
+    myfree(ptr);
     return NULL;
   }
   size_t ms = sizeof(struct meta);
@@ -259,6 +259,30 @@ void *myrealloc(void *ptr, size_t size)
   char *char_ptr = ptr;
   for (size_t i = 0; i < m->size; i++)
     new_ptr[i] = char_ptr[i];
-  free(ptr);
+  myfree(ptr);
   return new_ptr;
+}
+
+__attribute__ ((visibility ("default")))
+void mycleanup() {
+  // Iterate over all pages of memory
+  struct ph *ph = h;
+  while (ph) {
+    struct ph *next_ph = ph->next;
+
+    // Iterate over all blocks of memory on the current page
+    struct meta *m = ph->start;
+    while (m) {
+      struct meta *next_m = m->next;
+
+      // Free the current memory block
+      m = next_m;
+    }
+
+    // Unmap the current page of memory
+    munmap(ph, ph->ss);
+
+    ph = next_ph;
+  }
+  h= NULL;
 }
