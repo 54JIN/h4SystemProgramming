@@ -1,3 +1,4 @@
+//Compile the main.c with mymalloc.c file with this on the command: gcc -Wall -Wextra main.c mymalloc.c -o main && ./main
 #define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdint.h>
@@ -71,9 +72,8 @@ void cut_space(struct meta *m, size_t size)
   m->size = size;
 }
 
-
-__attribute__ (( __visibility__("default")))
-void *malloc(size_t size)
+__attribute__ ((visibility ("default")))
+void *mymalloc(size_t size)
 {
   if (size == 0)
     return NULL;
@@ -158,7 +158,7 @@ void check_empty()
   }
 }
 
-__attribute__ (( __visibility__("default")))
+__attribute__ ((visibility ("default")))
 void free(void *ptr)
 {
   if (ptr == NULL)
@@ -208,11 +208,11 @@ void free(void *ptr)
   check_empty();
 }
 
-__attribute__ (( __visibility__("default")))
+__attribute__ ((visibility ("default")))
 void *calloc(size_t nmemb, size_t size)
 {
   size_t s = nmemb * size;
-  char *ptr = malloc(s);
+  char *ptr = mymalloc(s);
   for (size_t i = 0; i < s; i++)
   {
     ptr[i] = 0;
@@ -220,11 +220,11 @@ void *calloc(size_t nmemb, size_t size)
   return ptr;
 }
 
-__attribute__ (( __visibility__("default")))
-void *realloc(void *ptr, size_t size)
+__attribute__ ((visibility ("default")))
+void *myrealloc(void *ptr, size_t size)
 {
   if (ptr == NULL)
-    return malloc(size);
+    return mymalloc(size);
   else if (size == 0)
   {
     free(ptr);
@@ -253,7 +253,7 @@ void *realloc(void *ptr, size_t size)
     return ptr;
   }
   // Relocating
-  char *new_ptr = malloc(size);
+  char *new_ptr = mymalloc(size);
   if (!new_ptr)
     return ptr;
   char *char_ptr = ptr;
