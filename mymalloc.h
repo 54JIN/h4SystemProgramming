@@ -1,3 +1,4 @@
+//Compile the main.c with mymalloc.c file with this on the command: gcc -Wall -Wextra main.c mymalloc.c -o main && ./main
 #include <stddef.h>
 
 // Header file for the myalloc library
@@ -25,4 +26,6 @@ void *init_page(struct ph *prev_ph, size_t size);
 void cut_space(struct meta *m, size_t size);
 
 // Allocate a block of memory with the specified size
-void *malloc(size_t size);
+void *mymalloc(size_t size);
+
+void *myrealloc(void *ptr, size_t size);
