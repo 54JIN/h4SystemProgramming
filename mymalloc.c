@@ -6,7 +6,6 @@
 #include <sys/mman.h>
 #include "mymalloc.h"
 
-
 //contains first page
 static struct ph *h = NULL;
 
