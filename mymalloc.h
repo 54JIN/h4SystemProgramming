@@ -1,23 +1,28 @@
-#ifndef DEFINE_H
-# define DEFINE_H
+#include <stddef.h>
 
-struct meta
-{
-  struct meta *prev;
-  struct meta *next;
-  int free; // 1 = free, used = 0, freed = -1
-  size_t size;
-};
+// Header file for the myalloc library
 
-struct ph
-{
+// Structure representing a page of memory
+struct ph {
   struct ph *prev;
   struct ph *next;
   struct meta *start;
-  /*
-  ** start size of ph->start->size = ss means page is empty
-  */
   size_t ss;
 };
 
-#endif
+// Structure representing a block of memory on a page
+struct meta {
+  struct meta *prev;
+  struct meta *next;
+  int free;
+  size_t size;
+};
+
+// Initialize a new page of memory with the specified size
+void *init_page(struct ph *prev_ph, size_t size);
+
+// Split a block of memory into two smaller blocks
+void cut_space(struct meta *m, size_t size);
+
+// Allocate a block of memory with the specified size
+void *malloc(size_t size);
