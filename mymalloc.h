@@ -20,7 +20,7 @@ struct meta {
 };
 
 // Initialize a new page of memory with the specified size
-void *init_page(struct ph *prev_ph, size_t size);
+void *myinit(struct ph *prev_ph, size_t size);
 
 // Split a block of memory into two smaller blocks
 void cut_space(struct meta *m, size_t size);
@@ -29,3 +29,7 @@ void cut_space(struct meta *m, size_t size);
 void *mymalloc(size_t size);
 
 void *myrealloc(void *ptr, size_t size);
+
+void myfree(void *ptr);
+
+void mycleanup();
